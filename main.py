@@ -37,7 +37,12 @@ class MainHandler(webapp2.RequestHandler):
         if not key:
             key = fetch_and_store(url)
             memcache.set(url, key)
-        img_url = images.get_serving_url(key, secure_url=True, size=int(size))
+        try:
+            img_url = images.get_serving_url(key, secure_url=True, size=int(size))
+        except images.ObjectNotFoundError:
+            key = fetch_and_store(url)
+            memcache.set(url, key)
+            img_url = images.get_serving_url(key, secure_url=True)
         self.redirect(img_url, permanent=True)
 
 app = webapp2.WSGIApplication([
