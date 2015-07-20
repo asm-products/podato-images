@@ -7,6 +7,7 @@ from google.appengine.api import blobstore
 
 import webapp2
 import cloudstorage
+import urllib
 
 GCS_BUCKET = app_identity.get_default_gcs_bucket_name()
 
@@ -28,7 +29,8 @@ def fetch_and_store(url):
     mime = res.headers["content-type"]
     if mime not in ["image/jpeg", "image/png", "image/gif"]:
         raise ValueError("Unsupported image type: %s" % (mime))
-    return create_file(url, res, mime)
+    filename = urllib.quote_plus(url)
+    return create_file(filename, res, mime)
 
 class MainHandler(webapp2.RequestHandler):
     def get(self, size):
