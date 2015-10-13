@@ -26,8 +26,8 @@ def create_file(filename, contents, mime_type):
 
 def fetch_and_store(url):
     res = urllib.urlopen(url)
-    mime = res.headers["content-type"]
-    if mime not in ["image/jpeg", "image/png", "image/gif"]:
+    mime = res.headers.get("content-type")
+    if not mime or mime.lower() not in ["image/jpeg", "image/png", "image/gif"]:
         raise ValueError("Unsupported image type: %s" % (mime))
     filename = urllib.quote_plus(url)
     return create_file(filename, res, mime)
